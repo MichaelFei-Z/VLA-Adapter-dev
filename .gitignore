@@ -155,3 +155,10 @@ pretrained_models/configs/config.json.*
 pretrained_models/prism-qwen25-extra-dinosiglip-224px-0_5b/
 ./wandb/
 outputs/
+__pycache__/
+*.pyc
+
+vla_adapter.egg-info/top_level.txt
+vla_adapter.egg-info/requires.txt
+vla_adapter.egg-info/SOURCES.txt
+vla_adapter.egg-info/PKG-INFO
