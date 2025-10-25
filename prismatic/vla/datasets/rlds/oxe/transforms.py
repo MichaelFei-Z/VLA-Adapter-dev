@@ -841,6 +841,22 @@ def libero_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     return trajectory
 
 
+def galbot_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    # gripper action is in -1 (open)...1 (close) --> clip to 0...1, flip --> +1 = open, 0 = close
+    # raw: 0-1;   need: 0-1
+    gripper_action = trajectory["action"][:, -1:]
+    trajectory["action"] = tf.concat(
+        [
+            trajectory["action"][:, :6],
+            gripper_action,
+        ],
+        axis=1,
+    )
+    trajectory["observation"]["EEF_state"] = trajectory["observation"]["state"][:, :6]
+    # raw: state pad;   need: pad state 
+    trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][:, -2:][:, ::-1]  # 2D gripper state
+    return trajectory
+
 
 def calvin_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     # calvin +1 = open, -1 = close
@@ -876,6 +892,10 @@ def aloha_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
 
 # === Registry ===
 OXE_STANDARDIZATION_TRANSFORMS = {
+    "spider_board_01": galbot_dataset_transform,
+    "spider_board_02": galbot_dataset_transform,
+    "spider_board_03": galbot_dataset_transform,
+    "spider_board_04": galbot_dataset_transform,
     "bridge_oxe": bridge_oxe_dataset_transform,
     "bridge_orig": bridge_orig_dataset_transform,
     "bridge_dataset": bridge_orig_dataset_transform,
